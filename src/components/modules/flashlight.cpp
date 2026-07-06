@@ -10,6 +10,7 @@ namespace components
 		game::dvar_s* flashlight_fov_inner = nullptr;
 		game::dvar_s* flashlight_fov_outer = nullptr;
 		game::dvar_s* flashlight_offset = nullptr;
+		game::dvar_s* flashlight_flip_dir = nullptr;
 	}
 
 	// called from within CG_CalcViewValues (see radiant_livelink::CG_CalcViewValues_stub)
@@ -47,7 +48,7 @@ namespace components
 		auto& light = scene->addedLight[scene->addedLightCount];
 		std::memset(&light, 0, sizeof(game::GfxLight));
 
-		light.type = 2; // GFX_LIGHT_TYPE_SPOT
+		light.type = 3; // GFX_LIGHT_TYPE_SPOT (0 = none, 1 = dir, 2 = omni, 3 = spot)
 		light.canUseShadowMap = 1;
 		light.exponent = 1;
 		light.def = def;
@@ -75,7 +76,7 @@ namespace components
 		for (auto i = 0; i < 3; i++)
 		{
 			light.origin[i] = ps->origin[i] + fwd[i] * offset[0] + rt[i] * offset[1] + up[i] * offset[2];
-			light.dir[i] = -fwd[i]; // GfxLight::dir points from the lit surface towards the light (as with the sun)
+			light.dir[i] = flashlight_flip_dir->current.enabled ? -fwd[i] : fwd[i]; // beam direction along the view vector
 		}
 
 		light.origin[2] += ps->viewHeightCurrent;
@@ -135,6 +136,12 @@ namespace components
 			/* z		*/ 4.0f,
 			/* minVal	*/ -100.0f,
 			/* maxVal	*/ 100.0f,
+			/* flags	*/ game::dvar_flags::saved);
+
+		flashlight_flip_dir = game::Dvar_RegisterBool(
+			/* name		*/ "flashlight_flip_dir",
+			/* desc		*/ "invert the spot light direction vector (debug)",
+			/* default	*/ 0,
 			/* flags	*/ game::dvar_flags::saved);
 
 		command::add("flashlighthead", "<0/1>", "toggle the head-mounted flashlight (no arg = toggle)", [](command::params params)

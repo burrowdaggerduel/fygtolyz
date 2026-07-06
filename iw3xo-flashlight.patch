@@ -40,7 +40,7 @@ index 54676da..8433636 100644
  #include "modules/menu_export.hpp"
 diff --git a/src/components/modules/flashlight.cpp b/src/components/modules/flashlight.cpp
 new file mode 100644
-index 0000000..f24544c
+index 0000000..09a693f
 --- /dev/null
 +++ b/src/components/modules/flashlight.cpp
 @@ -0,0 +1,149 @@
@@ -121,7 +121,7 @@ index 0000000..f24544c
 +		for (auto i = 0; i < 3; i++)
 +		{
 +			light.origin[i] = ps->origin[i] + fwd[i] * offset[0] + rt[i] * offset[1] + up[i] * offset[2];
-+			light.dir[i] = fwd[i];
++			light.dir[i] = -fwd[i]; // GfxLight::dir points from the lit surface towards the light (as with the sun)
 +		}
 +
 +		light.origin[2] += ps->viewHeightCurrent;

@@ -75,7 +75,7 @@ namespace components
 		for (auto i = 0; i < 3; i++)
 		{
 			light.origin[i] = ps->origin[i] + fwd[i] * offset[0] + rt[i] * offset[1] + up[i] * offset[2];
-			light.dir[i] = fwd[i];
+			light.dir[i] = -fwd[i]; // GfxLight::dir points from the lit surface towards the light (as with the sun)
 		}
 
 		light.origin[2] += ps->viewHeightCurrent;
